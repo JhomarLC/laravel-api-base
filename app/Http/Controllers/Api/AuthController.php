@@ -9,6 +9,7 @@ use App\Http\Requests\Auth\LoginRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Resources\UserResource;
+use Illuminate\Http\JsonResponse;
 
 class AuthController extends Controller
 {
@@ -47,6 +48,16 @@ class AuthController extends Controller
             'data' => [
                 'user' => new UserResource($user),
                 'token' => $token,
+            ]
+        ], 200);
+    }
+
+    public function me(Request $request)
+    {
+        return response()->json([
+            'message' => 'User authenticated',
+            'data' => [
+                'user' => new UserResource($request->user()),
             ]
         ], 200);
     }
