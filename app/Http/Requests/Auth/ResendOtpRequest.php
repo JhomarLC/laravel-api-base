@@ -4,7 +4,7 @@ namespace App\Http\Requests\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class LoginRequest extends FormRequest
+class ResendOtpRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,17 +23,6 @@ class LoginRequest extends FormRequest
     {
         return [
             'email' => ['required', 'string', 'email'],
-            'password' => 'required|string',
-        ];
-    }
-
-    public function messages(): array
-    {
-        return [
-            'email.required' => 'The email field is required.',
-            'email.email' => 'The email field must be a valid email address.',
-            'password.required' => 'The password field is required.',
-            'password.string' => 'The password field must be a string.',
         ];
     }
 }

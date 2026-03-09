@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 /*
@@ -19,15 +18,18 @@ Route::prefix('auth')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
 
+    // Public OTP verification (email + otp in body, no token)
+    Route::post('/email/verify', [AuthController::class, 'verifyEmail'])
+        ->middleware('throttle:5,1');
+    Route::post('/email/resend', [AuthController::class, 'resendVerification'])
+        ->middleware('throttle:3,1');
+
     // Protected routes
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/me', [AuthController::class, 'me']);
 
+        // Logout routes
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::post('/logout-all', [AuthController::class, 'logoutAll']);
     });
-});
-
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
 });
