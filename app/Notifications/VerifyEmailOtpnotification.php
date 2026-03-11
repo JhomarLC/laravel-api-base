@@ -37,14 +37,26 @@ class VerifyEmailOtpnotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         $expiryMinutes = 15;
+        $view = config('auth.verify_email_otp_view');
 
-        return (new MailMessage)
-            ->subject('Verify Your Email Address')
-            ->greeting('Hello ' . $notifiable->name . '!')
-            ->line('Your email verification code is:')
+        $mail = (new MailMessage)
+            ->subject(__('Verify Your Email Address'));
+
+        if (! empty($view) && view()->exists($view)) {
+            return $mail->view($view, [
+                'otp' => $this->otp,
+                'user' => $notifiable,
+                'expiryMinutes' => $expiryMinutes,
+                'appName' => config('app.name'),
+            ]);
+        }
+
+        return $mail
+            ->greeting(__('Hello :name!', ['name' => $notifiable->name]))
+            ->line(__('Your email verification code is:'))
             ->line('**' . $this->otp . '**')
-            ->line('This code will expire in ' . $expiryMinutes . ' minutes.')
-            ->line('If you did not request this, please ignore this email.');
+            ->line(__('This code will expire in :count minutes.', ['count' => $expiryMinutes]))
+            ->line(__('If you did not request this, please ignore this email.'));
     }
 
     /**

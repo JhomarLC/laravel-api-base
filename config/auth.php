@@ -112,4 +112,30 @@ return [
 
     'password_timeout' => 10800,
 
+    /*
+    |--------------------------------------------------------------------------
+    | Password Reset Email
+    |--------------------------------------------------------------------------
+    |
+    | The Blade view used for the password reset notification email. Set to
+    | null to use the default MailMessage (line/action) rendering. The view
+    | receives: $url, $user, $expireMinutes, $appName.
+    |
+    */
+
+    'password_reset_email_view' => env('PASSWORD_RESET_EMAIL_VIEW', 'emails.auth.password-reset'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Email Verification OTP
+    |--------------------------------------------------------------------------
+    |
+    | The Blade view used for the email verification OTP notification. Set to
+    | null/empty to use the default MailMessage rendering. The view receives:
+    | $otp, $user, $expiryMinutes, $appName.
+    |
+    */
+
+    'verify_email_otp_view' => env('VERIFY_EMAIL_OTP_VIEW', 'emails.auth.verify-email'),
+
 ];

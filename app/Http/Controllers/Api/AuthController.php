@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\ForgotPasswordRequest;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Requests\Auth\ResendOtpRequest;
+use App\Http\Requests\Auth\ResetPasswordRequest;
 use App\Http\Requests\Auth\VerifyEmailOtpRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
@@ -13,7 +15,7 @@ use App\Services\EmailVerificationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-
+use Illuminate\Support\Facades\Password;
 class AuthController extends Controller
 {
     public function __construct(
@@ -103,6 +105,39 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'If the account exists and is not yet verified, a verification code has been sent.',
+        ], 200);
+    }
+
+    public function forgotPassword(ForgotPasswordRequest $request): JsonResponse
+    {
+        Password::sendResetLink($request->only('email'));
+
+        return response()->json([
+            'message' => 'If the account exists, a password reset link has been sent to your email.',
+        ], 200);
+    }
+
+    public function resetPassword(ResetPasswordRequest $request): JsonResponse
+    {
+        $status = Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function (User $user, string $password) {
+                $user->forceFill([
+                    'password' => Hash::make($password),
+                ])->save();
+
+                $user->tokens()->delete();
+            }
+        );
+
+        if ($status !== Password::PASSWORD_RESET) {
+            return response()->json([
+                'message' => 'Invalid or expired reset token.',
+            ], 400);
+        }
+
+        return response()->json([
+            'message' => 'Password has been reset successfully.',
         ], 200);
     }
 

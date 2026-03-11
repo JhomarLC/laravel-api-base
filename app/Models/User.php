@@ -47,4 +47,9 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         app(EmailVerificationService::class)->sendOtp($this);
     }
+
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new \App\Notifications\ResetPasswordNotification($token));
+    }
 }

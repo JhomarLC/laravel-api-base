@@ -24,6 +24,12 @@ Route::prefix('auth')->group(function () {
     Route::post('/email/resend', [AuthController::class, 'resendVerification'])
         ->middleware('throttle:3,1');
 
+    // Public password reset (no auth required)
+    Route::post('/password/forgot', [AuthController::class, 'forgotPassword'])
+        ->middleware('throttle:3,1');
+    Route::post('/password/reset', [AuthController::class, 'resetPassword'])
+        ->middleware('throttle:5,1');
+
     // Protected routes
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/me', [AuthController::class, 'me']);
