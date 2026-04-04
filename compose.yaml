@@ -39,7 +39,8 @@ services:
                 reservations:
                     memory: 256M
         depends_on:
-            - mysql
+            mysql:
+                condition: service_healthy
     mysql:
         image: 'mysql:8.4'
         ports:
